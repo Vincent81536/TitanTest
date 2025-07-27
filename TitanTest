@@ -880,27 +880,43 @@ RunButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Hit button setup (styled like Run button, plays animation on click)
-local HitButton = Instance.new("TextButton")
-HitButton.Size = UDim2.new(0, 100, 0, 50)
-HitButton.Position = UDim2.new(0, 270, 0.75, 0) -- Appears next to Run
-HitButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-HitButton.Text = "Hit"
-HitButton.TextColor3 = Color3.new(1, 1, 1)
-HitButton.Font = Enum.Font.GothamBold
-HitButton.TextScaled = true
-HitButton.Parent = Gui -- assumes your GUI is named "Gui"
+-- Floating "Hit" button (external UI) that plays internal GUI animation
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 
-local hitAnim = Instance.new("Animation")
-hitAnim.AnimationId = "rbxassetid://71308482162106"
-local hitTrack = Humanoid:LoadAnimation(hitAnim)
+-- Create external button (not part of GUI layout)
+local floatingGui = Instance.new("ScreenGui")
+floatingGui.Name = "HitButtonGUI"
+floatingGui.ResetOnSpawn = false
+floatingGui.Parent = player:WaitForChild("PlayerGui")
 
-HitButton.MouseButton1Click:Connect(function()
-	if not hitTrack.IsPlaying then
-		hitTrack:Play()
+local hitButton = Instance.new("TextButton")
+hitButton.Name = "HitButton"
+hitButton.Size = UDim2.new(0, 100, 0, 50)
+hitButton.Position = UDim2.new(0, 270, 0.85, 0) -- place it lower
+hitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+hitButton.Text = "Hit"
+hitButton.TextScaled = true
+hitButton.TextColor3 = Color3.new(1, 1, 1)
+hitButton.Font = Enum.Font.GothamBold
+hitButton.Parent = floatingGui
+
+-- Play the same animation system used by the GUI
+local mafiosoHit = Instance.new("Animation")
+mafiosoHit.Name = "Mafiosos hit"
+mafiosoHit.AnimationId = "rbxassetid://71308482162106"
+local animTrack = humanoid:LoadAnimation(mafiosoHit)
+
+hitButton.MouseButton1Click:Connect(function()
+	if not animTrack.IsPlaying then
+		animTrack:Play()
 	end
 end)
 
-Humanoid.Died:Connect(function()
-	if HitButton then HitButton:Destroy() end
+-- Remove button when dead
+humanoid.Died:Connect(function()
+	if floatingGui then
+		floatingGui:Destroy()
+	end
 end)

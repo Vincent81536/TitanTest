@@ -563,8 +563,8 @@ end)
 end
 end
 
-CreateAnimation("Idle", 136078657506707)
-CreateAnimation("Walk", 130213485744288)
+CreateAnimation("Idle", 0)
+CreateAnimation("Walk", 110246326884421)
 CreateAnimation("Jump", 84397577392351)
 CreateAnimation("Fall", 90270295182351)
 
@@ -634,13 +634,13 @@ So, people, here you go. Another ‘Baseless Accusations & Keyboard Rage!‘ epi
 
 
 -- Register the Run animation
-CreateAnimation("Run", 98913971068661)
+CreateAnimation("Run", 110246326884421)
 
 -- Track run state
 local isRunning = false
 local Humanoid = Character:FindFirstChildOfClass("Humanoid")
 
--- Persistent GUI for Run Toggle
+--Persistent GUI for Run Toggle
 local function createRunToggleUI()
     if game.CoreGui:FindFirstChild("RunToggleUI") then
         game.CoreGui.RunToggleUI:Destroy()
@@ -891,10 +891,10 @@ end)
 -- ✅ Add SpecialMesh with custom texture AFTER reanimation
 task.delay(3, function()
     local limbs = {
-        { MeshId = "121304376791439", Name = "Left Leg", TextureId = "10482966846" },
-        { MeshId = "121304376791439", Name = "Right Leg", TextureId = "10482966846" },
-        { MeshId = "117287001096396", Name = "Left Arm", TextureId = "10482966846" },
-        { MeshId = "117287001096396", Name = "Right Arm", TextureId = "10482966846" },
+        { MeshId = "121304376791439", Name = "Left Leg", TextureId = "121023324229475" },
+        { MeshId = "121304376791439", Name = "Right Leg", TextureId = "121023324229475" },
+        { MeshId = "117287001096396", Name = "Left Arm", TextureId = "121023324229475" },
+        { MeshId = "117287001096396", Name = "Right Arm", TextureId = "121023324229475" },
     }
 
     local Character = game.Players.LocalPlayer.Character

@@ -836,52 +836,55 @@ end)
 
 -- Hook into animation stop to re-anchor player
 task.delay(2, function()
+-- ⚔️ Attack Button UI (black button, white font, draggable, disappears on death)
+task.delay(1, function()
+	local player = game.Players.LocalPlayer
+	local char = player.Character or player.CharacterAdded:Wait()
+
+	-- Cleanup old GUI if any
+	if player.PlayerGui:FindFirstChild("AttackButtonGui") then
+		player.PlayerGui.AttackButtonGui:Destroy()
+	end
+
+	-- Create GUI
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = "AttackButtonGui"
+	screenGui.ResetOnSpawn = true
+	screenGui.Parent = player:WaitForChild("PlayerGui")
+
+	-- Create Button
+	local attackButton = Instance.new("TextButton")
+	attackButton.Size = UDim2.new(0, 100, 0, 40)
+	attackButton.Position = UDim2.new(0, 20, 0.5, 50)
+	attackButton.BackgroundColor3 = Color3.new(0, 0, 0)
+	attackButton.TextColor3 = Color3.new(1, 1, 1)
+	attackButton.Text = "Attack"
+	attackButton.Font = Enum.Font.GothamBold
+	attackButton.TextSize = 18
+	attackButton.Draggable = true
+	attackButton.Active = true
+	attackButton.Parent = screenGui
+
+	local played = false
+	attackButton.MouseButton1Click:Connect(function()
+		if played then return end
+		played = true
+
+		local animId = "rbxassetid://71308482162106"
+		local animObj = Instance.new("Animation")
+		animObj.AnimationId = animId
+
+		local humanoid = char:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			local track = humanoid:LoadAnimation(animObj)
+			track:Play()
+		end
+	end)
+end)
+
     if Anims["Run away V2"] then
         Anims["Run away V2"].Stopped:Connect(function()
             RootPart.CFrame = RootPart.CFrame + Vector3.new(0, 3, 0)
         end)
     end
-end)
-
--- LocalScript inside StarterGui
-
--- Wait for player
-local player = game.Players.LocalPlayer
-
--- Create ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AttackGui"
-screenGui.ResetOnSpawn = true -- This ensures it resets on death
-screenGui.Parent = player:WaitForChild("PlayerGui")
-
--- Create Attack Button
-local attackButton = Instance.new("TextButton")
-attackButton.Name = "AttackButton"
-attackButton.Size = UDim2.new(0, 120, 0, 40)
-attackButton.Position = UDim2.new(0.5, -60, 0.5, -20)
-attackButton.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
-attackButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-attackButton.Font = Enum.Font.GothamBold
-attackButton.TextSize = 18
-attackButton.Text = "Attack"
-attackButton.Active = true
-attackButton.Draggable = true
-attackButton.Parent = screenGui
-
--- Animation setup
-local animationId = "rbxassetid://71308482162106"
-local hasPlayed = false
-
-attackButton.MouseButton1Click:Connect(function()
-	if hasPlayed then return end
-	hasPlayed = true
-
-	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoid = character:FindFirstChildOfClass("Humanoid")
-	if humanoid then
-		local animation = Instance.new("Animation")
-		animation.AnimationId = animationId
-		local track = humanoid:LoadAnimation(animation)
-		track:Play()
-	end
 end)

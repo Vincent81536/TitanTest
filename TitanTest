@@ -843,80 +843,46 @@ task.delay(2, function()
     end
 end)
 
-local UIS = game:GetService("UserInputService")
-local RS = game:GetService("RunService")
-local Plr = game.Players.LocalPlayer
-local Char = Plr.Character or Plr.CharacterAdded:Wait()
-local Humanoid = Char:WaitForChild("Humanoid")
-local HRP = Char:WaitForChild("HumanoidRootPart")
-local Animate = Char:WaitForChild("Animate")
-local Cam = workspace.CurrentCamera
+-- LocalScript inside StarterGui
 
-local PlayerGui = Plr:WaitForChild("PlayerGui")
-local Gui = Instance.new("ScreenGui", PlayerGui)
-Gui.ResetOnSpawn = false
-Gui.Name = "MovementGui"
+-- Create the ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AttackGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local RunButton = Instance.new("TextButton")
-RunButton.Size = UDim2.new(0, 100, 0, 50)
-RunButton.Position = UDim2.new(0, 160, 0.75, 0)
-RunButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-RunButton.Text = "Run"
-RunButton.TextColor3 = Color3.new(1, 1, 1)
-RunButton.Font = Enum.Font.GothamBold
-RunButton.TextScaled = true
-RunButton.Parent = Gui
+-- Create the Attack Button
+local attackButton = Instance.new("TextButton")
+attackButton.Name = "AttackButton"
+attackButton.Size = UDim2.new(0, 120, 0, 40)
+attackButton.Position = UDim2.new(0.5, -60, 0.5, -20)
+attackButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+attackButton.TextColor3 = Color3.new(1,1,1)
+attackButton.Font = Enum.Font.GothamBold
+attackButton.TextSize = 18
+attackButton.Text = "Attack"
+attackButton.Parent = screenGui
+attackButton.Active = true
+attackButton.Draggable = true
 
-local running = false
-
-RunButton.MouseButton1Click:Connect(function()
-	running = not running
-	if running then
-		Humanoid.WalkSpeed = 24
-		RunButton.Text = "Stop"
-	else
-		Humanoid.WalkSpeed = 16
-		RunButton.Text = "Run"
-	end
-end)
-
--- Floating "Hit" button (external UI) that plays internal GUI animation
+-- Play Animation on Click
+local animationId = "rbxassetid://71308482162106"
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
 
--- Create external button (not part of GUI layout)
-local floatingGui = Instance.new("ScreenGui")
-floatingGui.Name = "HitButtonGUI"
-floatingGui.ResetOnSpawn = false
-floatingGui.Parent = player:WaitForChild("PlayerGui")
-
-local hitButton = Instance.new("TextButton")
-hitButton.Name = "HitButton"
-hitButton.Size = UDim2.new(0, 100, 0, 50)
-hitButton.Position = UDim2.new(0, 270, 0.85, 0) -- place it lower
-hitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-hitButton.Text = "Hit"
-hitButton.TextScaled = true
-hitButton.TextColor3 = Color3.new(1, 1, 1)
-hitButton.Font = Enum.Font.GothamBold
-hitButton.Parent = floatingGui
-
--- Play the same animation system used by the GUI
-local mafiosoHit = Instance.new("Animation")
-mafiosoHit.Name = "Mafiosos hit"
-mafiosoHit.AnimationId = "rbxassetid://71308482162106"
-local animTrack = humanoid:LoadAnimation(mafiosoHit)
-
-hitButton.MouseButton1Click:Connect(function()
-	if not animTrack.IsPlaying then
-		animTrack:Play()
+local function playAttackAnimation()
+	-- Wait for character if needed
+	if not character or not character:FindFirstChild("Humanoid") then
+		character = player.Character or player.CharacterAdded:Wait()
 	end
-end)
 
--- Remove button when dead
-humanoid.Died:Connect(function()
-	if floatingGui then
-		floatingGui:Destroy()
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		local animation = Instance.new("Animation")
+		animation.AnimationId = animationId
+		local track = humanoid:LoadAnimation(animation)
+		track:Play()
 	end
-end)
+end
+
+attackButton.MouseButton1Click:Connect(playAttackAnimation)

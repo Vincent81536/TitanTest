@@ -844,37 +844,78 @@ task.delay(2, function()
     end
 end)
 
--- ✅ Create "Hit" animation once
-CreateAnimation("Hit", 71308482162106)
+-- ✅ Fluxus-Compatible Attack Button (uses 'Mafiosos hit ' from GUI)
+task.wait(2) -- wait for GUI to load animations
 
--- ✅ Add draggable "Attack" button
-local function createAttackButton()
-    if game.CoreGui:FindFirstChild("AttackButtonUI") then
-        game.CoreGui.AttackButtonUI:Destroy()
-    end
-
-    local AttackButtonUI = Instance.new("ScreenGui")
-    AttackButtonUI.Name = "AttackButtonUI"
-    AttackButtonUI.ResetOnSpawn = false
-    AttackButtonUI.Parent = game.CoreGui
-
-    local AttackButton = Instance.new("TextButton")
-    AttackButton.Size = UDim2.new(0, 100, 0, 40)
-    AttackButton.Position = UDim2.new(0, 130, 0.5, 0) -- Next to Run button
-    AttackButton.Text = "Attack"
-    AttackButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
-    AttackButton.TextColor3 = Color3.new(1, 1, 1)
-    AttackButton.Font = Enum.Font.GothamBold
-    AttackButton.TextSize = 18
-    AttackButton.Draggable = true
-    AttackButton.Active = true
-    AttackButton.Parent = AttackButtonUI
-
-    AttackButton.MouseButton1Click:Connect(function()
-        if Anims and Anims:FindFirstChild("Hit") then
-            PlayAnim(Character, Anims["Hit"], 0.1, 1)
-        end
-    end)
+-- Create animation if missing
+if not Anims:FindFirstChild("Mafiosos hit ") then
+    CreateAnimation("Mafiosos hit ", 71308482162106)
 end
 
-createAttackButton()
+-- Prepare GUI parent (Fluxus-compatible)
+local parentGui = (gethui and gethui()) or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- Remove existing button
+if parentGui:FindFirstChild("AttackButtonUI") then
+    parentGui.AttackButtonUI:Destroy()
+end
+
+-- Create GUI + button
+local AttackButtonUI = Instance.new("ScreenGui")
+AttackButtonUI.Name = "AttackButtonUI"
+AttackButtonUI.ResetOnSpawn = false
+AttackButtonUI.Parent = parentGui
+
+local AttackButton = Instance.new("TextButton")
+AttackButton.Size = UDim2.new(0, 100, 0, 40)
+AttackButton.Position = UDim2.new(0, 130, 0.5, 0)
+AttackButton.Text = "Attack"
+AttackButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+AttackButton.TextColor3 = Color3.new(1, 1, 1)
+AttackButton.Font = Enum.Font.GothamBold
+AttackButton.TextSize = 18
+AttackButton.Active = true
+AttackButton.AutoButtonColor = true
+AttackButton.Parent = AttackButtonUI
+
+-- Manual drag (Fluxus workaround)
+local dragging, dragInput, mousePos, framePos = false
+
+AttackButton.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		mousePos = input.Position
+		framePos = AttackButton.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+AttackButton.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if dragging and input == dragInput then
+		local delta = input.Position - mousePos
+		AttackButton.Position = UDim2.new(
+			framePos.X.Scale, framePos.X.Offset + delta.X,
+			framePos.Y.Scale, framePos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+-- Play animation on click
+AttackButton.MouseButton1Click:Connect(function()
+    local anim = Anims:FindFirstChild("Mafiosos hit ")
+    if anim and Character then
+        PlayAnim(Character, anim, 0.1, 1)
+    else
+        warn("Mafiosos hit animation not found!")
+    end
+end)

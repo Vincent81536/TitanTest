@@ -836,6 +836,12 @@ end)
 
 -- Hook into animation stop to re-anchor player
 task.delay(2, function()
+    if Anims["Run away V2"] then
+        Anims["Run away V2"].Stopped:Connect(function()
+            RootPart.CFrame = RootPart.CFrame + Vector3.new(0, 3, 0)
+        end)
+    end
+end)
 -- ⚔️ Attack Button UI (black button, white font, draggable, disappears on death)
 task.delay(1, function()
 	local player = game.Players.LocalPlayer
@@ -882,9 +888,3 @@ task.delay(1, function()
 	end)
 end)
 
-    if Anims["Run away V2"] then
-        Anims["Run away V2"].Stopped:Connect(function()
-            RootPart.CFrame = RootPart.CFrame + Vector3.new(0, 3, 0)
-        end)
-    end
-end)

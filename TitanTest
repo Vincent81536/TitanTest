@@ -638,6 +638,30 @@ end)
 end
 
 createRunToggleUI()
+-- ✅ Register attack animation
+CreateAnimation("Mafiosos hit ", 71308482162106)
+
+-- ✅ Create floating Attack button
+local AttackUI = Instance.new("ScreenGui")
+AttackUI.Name = "AttackUI"
+AttackUI.ResetOnSpawn = false
+AttackUI.Parent = game.CoreGui
+
+local AttackButton = Instance.new("TextButton")
+AttackButton.Size = UDim2.new(0, 100, 0, 40)
+AttackButton.Position = UDim2.new(0, 140, 0.5, 0)
+AttackButton.Text = "Attack"
+AttackButton.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+AttackButton.TextColor3 = Color3.new(1, 1, 1)
+AttackButton.Font = Enum.Font.GothamBold
+AttackButton.TextSize = 18
+AttackButton.Active = true
+AttackButton.Draggable = true
+AttackButton.Parent = AttackUI
+
+AttackButton.MouseButton1Click:Connect(function()
+    PlayAnim(Character, Anims["Mafiosos hit "], 0.1, 1)
+end) 
 
 -- Modify heartbeat to play run animation only during movement if run mode is enabled
 game:GetService("RunService").Heartbeat:Connect(function()

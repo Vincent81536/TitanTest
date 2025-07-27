@@ -4,29 +4,6 @@ local Character = nil
 if Reanimate == "Hatless" then
 local Hatless = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/hatless/refs/heads/main/hatless"))()
 Character = Hatless.FakeCharacter
-
-local ExtraParts = {
-    {MeshId = "121668589285446", Name = "Torso", Offset = CFrame.new(), TextureId = "121668589285446"},
-    {MeshId = "120230112701079", Name = "Left Arm", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "120230112701079"},
-    {MeshId = "76687571475377", Name = "Right Arm", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "76687571475377"},
-    {MeshId = "80629770394501", Name = "Left Leg", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "80629770394501"},
-    {MeshId = "127671621543010", Name = "Right Leg", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "127671621543010"},
-    {MeshId = "105058659622112", Name = "Head", Offset = CFrame.new(), TextureId = "105058659622112"},
-}
--- updated offsets based on visual test
-ExtraParts = {
-
-{MeshId = "121668589285446", Name = "Torso", Offset = CFrame.new(0, 2.5, 0), TextureId = "121668589285446"},
-{MeshId = "120230112701079", Name = "Left Arm", Offset = CFrame.new(-1.5, 2.5, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "120230112701079"},
-{MeshId = "76687571475377", Name = "Right Arm", Offset = CFrame.new(1.5, 2.5, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "76687571475377"},
-{MeshId = "80629770394501", Name = "Left Leg", Offset = CFrame.new(-0.75, 0, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "80629770394501"},
-{MeshId = "127671621543010", Name = "Right Leg", Offset = CFrame.new(0.75, 0, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "127671621543010"},
-{MeshId = "105058659622112", Name = "Head", Offset = CFrame.new(0, 4.5, 0), TextureId = "105058659622112"},
-}
-for _, part in ipairs(ExtraParts) do
-    Hatless:ApplyAccessory(part)
-end
-
 elseif getgenv().Framework == "Krypton" then
 KryptonConfiguration = {
 WaitTime = 0.251,
@@ -93,25 +70,6 @@ elseif Reanimate == "Emperyean" then
 local Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/module-/refs/heads/main/EmperyeanReanimate"))()
 Reanimate.Start({
 Accessories = {
-{ MeshId = "121304376791439", Name = "Left Leg", Offset = CFrame.new(-1, 2.5, 0), TextureId = "10482966846" },  
-{ MeshId = "121304376791439", Name = "Right Leg", Offset = CFrame.new(1, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "117287001096396", Name = "Right Arm", Offset = CFrame.new(1.5, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "117287001096396", Name = "Left Arm", Offset = CFrame.new(-1.5, 2.5, 0), TextureId = "10482966846" },
-
-
-{MeshId = "121668589285446", Name = "Torso", Offset = CFrame.new(0, 2.5, 0), TextureId = "121668589285446"},
-{MeshId = "120230112701079", Name = "Left Arm", Offset = CFrame.new(-1.5, 2.5, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "120230112701079"},
-{MeshId = "76687571475377", Name = "Right Arm", Offset = CFrame.new(1.5, 2.5, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "76687571475377"},
-{MeshId = "80629770394501", Name = "Left Leg", Offset = CFrame.new(-0.75, 0, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "80629770394501"},
-{MeshId = "127671621543010", Name = "Right Leg", Offset = CFrame.new(0.75, 0, 0) * CFrame.Angles(0, 0, 1.57), TextureId = "127671621543010"},
-{MeshId = "105058659622112", Name = "Head", Offset = CFrame.new(0, 4.5, 0), TextureId = "105058659622112"},
-
-{ MeshId = "120230112701079", Name = "Left Arm", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "120230112701079" },
-{ MeshId = "76687571475377", Name = "Right Arm", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "76687571475377" },
-{ MeshId = "80629770394501", Name = "Left Leg", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "80629770394501" },
-{ MeshId = "127671621543010", Name = "Right Leg", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "127671621543010" },
-{ MeshId = "105058659622112", Name = "Head", Offset = CFrame.new(), TextureId = "105058659622112" },
-
 -- SB Rig
 { MeshId = "125443585075666", Name = "Torso", Offset = CFrame.Angles(0, 3.15, 0), TextureId = "121023324229475" },
 { MeshId = "121342985816617", Name = "Left Arm", Offset = CFrame.Angles(0, 0, 1.57), TextureId = "129264637819824" },
@@ -148,13 +106,8 @@ Accessories = {
 { MeshId = "18640914129", Names = { "Left Arm", "Right Arm"}, Offset = CFrame.Angles(0, 0, 0), TextureId = "18640914168" },
 { MeshId = "18640901641", Names = { "Left Leg", "Right Leg"}, Offset = CFrame.Angles(0, 0, 0), TextureId = "18640901676" },
 -- request
---working
-{ MeshId = "121304376791439", Name = "Left Leg", Offset = CFrame.new(-1, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "121304376791439", Name = "Right Leg", Offset = CFrame.new(1, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "117287001096396", Name = "Right Arm", Offset = CFrame.new(1.5, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "117287001096396", Name = "Left Arm", Offset = CFrame.new(-1.5, 2.5, 0), TextureId = "10482966846" },
 { MeshId = "14768666349", Name = "Torso", Offset = CFrame.Angles(0, 0, 0), TextureId = "14768664565" },
---Working
+
 { MeshId = "14768684979", Names = { "Left Arm", "Right Arm"}, Offset = CFrame.Angles(0, 0, 1.57), TextureId = "14768683674" },
 { MeshId = "137702817952968", Names = { "Left Arm", "Right Arm", "Left Leg", "Right Leg" }, Offset = CFrame.Angles(0, 0, 1.57), TextureId = "135650240593878" },--84451219120140
 { MeshId = "137702817952968", Names = { "Left Arm", "Right Arm", "Left Leg", "Right Leg" }, Offset = CFrame.Angles(0, 0, 1.57), TextureId = "135650240593878" },--72292903231768
@@ -640,7 +593,7 @@ CreateAnimation("Run", 110246326884421)
 local isRunning = false
 local Humanoid = Character:FindFirstChildOfClass("Humanoid")
 
---Persistent GUI for Run Toggle
+-- Persistent GUI for Run Toggle
 local function createRunToggleUI()
     if game.CoreGui:FindFirstChild("RunToggleUI") then
         game.CoreGui.RunToggleUI:Destroy()
@@ -883,38 +836,5 @@ task.delay(2, function()
         Anims["Run away V2"].Stopped:Connect(function()
             RootPart.CFrame = RootPart.CFrame + Vector3.new(0, 3, 0)
         end)
-    end
-end)
-
-
-
--- ✅ Add SpecialMesh with custom texture AFTER reanimation
-task.delay(3, function()
-    local limbs = {
-        { MeshId = "121304376791439", Name = "Left Leg", TextureId = "121023324229475" },
-        { MeshId = "121304376791439", Name = "Right Leg", TextureId = "121023324229475" },
-        { MeshId = "117287001096396", Name = "Left Arm", TextureId = "121023324229475" },
-        { MeshId = "117287001096396", Name = "Right Arm", TextureId = "121023324229475" },
-    }
-
-    local Character = game.Players.LocalPlayer.Character
-    for _, data in ipairs(limbs) do
-        local part = Character:FindFirstChild(data.Name)
-        if part then
-            for _, obj in ipairs(part:GetChildren()) do
-                if obj:IsA("SpecialMesh") or obj:IsA("FileMesh") then
-                    obj:Destroy()
-                end
-            end
-
-            local mesh = Instance.new("SpecialMesh")
-            mesh.MeshType = Enum.MeshType.FileMesh
-            mesh.MeshId = "rbxassetid://" .. data.MeshId
-            mesh.TextureId = "rbxassetid://" .. data.TextureId
-            mesh.Parent = part
-
-            part.Material = Enum.Material.SmoothPlastic
-            part.Color = Color3.new(1, 1, 1)
-        end
     end
 end)

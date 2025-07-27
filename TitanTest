@@ -831,9 +831,6 @@ ToggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
-
-
-
 -- Hook into animation stop to re-anchor player
 task.delay(2, function()
     if Anims["Run away V2"] then

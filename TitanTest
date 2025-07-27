@@ -844,7 +844,44 @@ task.delay(2, function()
     end
 end)
 
--- Create a fixed "Attack" button next to the "Run" button
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local Plr = game.Players.LocalPlayer
+local Char = Plr.Character or Plr.CharacterAdded:Wait()
+local Humanoid = Char:WaitForChild("Humanoid")
+local HRP = Char:WaitForChild("HumanoidRootPart")
+local Animate = Char:WaitForChild("Animate")
+local Cam = workspace.CurrentCamera
+
+local PlayerGui = Plr:WaitForChild("PlayerGui")
+local Gui = Instance.new("ScreenGui", PlayerGui)
+Gui.ResetOnSpawn = false
+Gui.Name = "MovementGui"
+
+local RunButton = Instance.new("TextButton")
+RunButton.Size = UDim2.new(0, 100, 0, 50)
+RunButton.Position = UDim2.new(0, 160, 0.75, 0)
+RunButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+RunButton.Text = "Run"
+RunButton.TextColor3 = Color3.new(1, 1, 1)
+RunButton.Font = Enum.Font.GothamBold
+RunButton.TextScaled = true
+RunButton.Parent = Gui
+
+local running = false
+
+RunButton.MouseButton1Click:Connect(function()
+	running = not running
+	if running then
+		Humanoid.WalkSpeed = 24
+		RunButton.Text = "Stop"
+	else
+		Humanoid.WalkSpeed = 16
+		RunButton.Text = "Run"
+	end
+end)
+
+-- Fixed-position "Attack" button added like the "Run" button
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -857,7 +894,7 @@ screenGui.Parent = player:WaitForChild("PlayerGui")
 local attackButton = Instance.new("TextButton")
 attackButton.Name = "AttackButton"
 attackButton.Size = UDim2.new(0, 100, 0, 50)
-attackButton.Position = UDim2.new(0, 270, 0.75, 0) -- Adjusted right of "Run"
+attackButton.Position = UDim2.new(0, 270, 0.75, 0)
 attackButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 attackButton.BorderSizePixel = 0
 attackButton.Text = "Attack"
@@ -866,19 +903,16 @@ attackButton.TextColor3 = Color3.new(1, 1, 1)
 attackButton.Font = Enum.Font.GothamBold
 attackButton.Parent = screenGui
 
--- Load and play attack animation
 local attackAnim = Instance.new("Animation")
 attackAnim.AnimationId = "rbxassetid://71308482162106"
 local attackTrack = humanoid:LoadAnimation(attackAnim)
 
 attackButton.MouseButton1Click:Connect(function()
-    if not attackTrack.IsPlaying then
-        attackTrack:Play()
-    end
+	if not attackTrack.IsPlaying then
+		attackTrack:Play()
+	end
 end)
 
--- Remove GUI on death
 humanoid.Died:Connect(function()
-    if screenGui then screenGui:Destroy() end
+	if screenGui then screenGui:Destroy() end
 end)
-

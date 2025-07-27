@@ -93,10 +93,10 @@ elseif Reanimate == "Emperyean" then
 local Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/module-/refs/heads/main/EmperyeanReanimate"))()
 Reanimate.Start({
 Accessories = {
-{ MeshId = "74603792617282", Name = "CloverLeft", Offset = CFrame.new(-1.5, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "80401121980206", Name = "CloverRight", Offset = CFrame.new(1.5, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "94138150908378", Name = "CloverMiddle", Offset = CFrame.new(0, 2.5, 0), TextureId = "10482966846" },
-{ MeshId = "111809732325428", Name = "CloverLeftArm", Offset = CFrame.new(-1.25, 2.5, 0), TextureId = "10482966846" },
+{ MeshId = "121304376791439", Name = "Left Leg", Offset = CFrame.new(-1, 2.5, 0), TextureId = "10482966846" },  -Working here
+{ MeshId = "121304376791439", Name = "Right Leg", Offset = CFrame.new(1, 2.5, 0), TextureId = "10482966846" },
+{ MeshId = "117287001096396", Name = "Right Arm", Offset = CFrame.new(1.5, 2.5, 0), TextureId = "10482966846" },
+{ MeshId = "117287001096396", Name = "Left Arm", Offset = CFrame.new(-1.5, 2.5, 0), TextureId = "10482966846" },
 
 
 {MeshId = "121668589285446", Name = "Torso", Offset = CFrame.new(0, 2.5, 0), TextureId = "121668589285446"},

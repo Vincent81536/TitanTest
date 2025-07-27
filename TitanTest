@@ -880,39 +880,3 @@ RunButton.MouseButton1Click:Connect(function()
 		RunButton.Text = "Run"
 	end
 end)
-
--- "Hit" button added like "Run" and "Attack"
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "HitGUI"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = player:WaitForChild("PlayerGui")
-
-local hitButton = Instance.new("TextButton")
-hitButton.Name = "HitButton"
-hitButton.Size = UDim2.new(0, 100, 0, 50)
-hitButton.Position = UDim2.new(0, 380, 0.75, 0) -- positioned to the right
-hitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-hitButton.BorderSizePixel = 0
-hitButton.Text = "Hit"
-hitButton.TextScaled = true
-hitButton.TextColor3 = Color3.new(1, 1, 1)
-hitButton.Font = Enum.Font.GothamBold
-hitButton.Parent = screenGui
-
-local hitAnim = Instance.new("Animation")
-hitAnim.AnimationId = "rbxassetid://71308482162106"
-local hitTrack = humanoid:LoadAnimation(hitAnim)
-
-hitButton.MouseButton1Click:Connect(function()
-    if not hitTrack.IsPlaying then
-        hitTrack:Play()
-    end
-end)
-
-humanoid.Died:Connect(function()
-    if screenGui then screenGui:Destroy() end
-end)

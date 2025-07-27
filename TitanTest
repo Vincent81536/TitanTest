@@ -488,9 +488,11 @@ local Forsaken = {
 {Name = "Headlock V2", ID = 110536141087568},
 {Name = "Dip", ID = 103112841595182},
 {Name = "Simple", ID = 95650849617284},
-{Name = "So Retro", ID = 125239534389442},
-{Name = "Mafiosos hat ", ID = 108665782885630},
-{Name = "Mafiosos dance ", ID = 76038781746720},
+{Name = "So Retro", ID = 125239534389442}
+{Name = "Mafiosos hat ", ID = 108665782885630}
+{Name = "Mafiosos dance ", ID = 76038781746720}
+
+
 }
 
 for i, v in pairs(Forsaken) do
@@ -842,7 +844,6 @@ task.delay(2, function()
     end
 end)
 
-
 -- Create a fixed "Attack" button next to the "Run" button
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -881,4 +882,3 @@ humanoid.Died:Connect(function()
     if screenGui then screenGui:Destroy() end
 end)
 
-end)

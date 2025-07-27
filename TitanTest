@@ -843,36 +843,42 @@ task.delay(2, function()
 end)
 
 
--- Create a draggable Attack Button
+-- Create a fixed "Attack" button next to the "Run" button
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
-local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-screenGui.Name = "AttackUI"
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AttackGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 100, 0, 40)
-button.Position = UDim2.new(0.5, -50, 0.9, -20)
-button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-button.Text = "Attack"
-button.TextColor3 = Color3.new(1, 1, 1)
-button.Draggable = true
-button.Active = true
-button.Parent = screenGui
+local attackButton = Instance.new("TextButton")
+attackButton.Name = "AttackButton"
+attackButton.Size = UDim2.new(0, 100, 0, 50)
+attackButton.Position = UDim2.new(0, 270, 0.75, 0) -- Adjusted right of "Run"
+attackButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+attackButton.BorderSizePixel = 0
+attackButton.Text = "Attack"
+attackButton.TextScaled = true
+attackButton.TextColor3 = Color3.new(1, 1, 1)
+attackButton.Font = Enum.Font.GothamBold
+attackButton.Parent = screenGui
 
--- Attack Animation
-local animation = Instance.new("Animation")
-animation.AnimationId = "rbxassetid://71308482162106"
-local track = humanoid:LoadAnimation(animation)
+-- Load and play attack animation
+local attackAnim = Instance.new("Animation")
+attackAnim.AnimationId = "rbxassetid://71308482162106"
+local attackTrack = humanoid:LoadAnimation(attackAnim)
 
-button.MouseButton1Click:Connect(function()
-    if not track.IsPlaying then
-        track:Play()
+attackButton.MouseButton1Click:Connect(function()
+    if not attackTrack.IsPlaying then
+        attackTrack:Play()
     end
 end)
 
--- Remove button on death
+-- Remove GUI on death
 humanoid.Died:Connect(function()
-    screenGui:Destroy()
+    if screenGui then screenGui:Destroy() end
+end)
+
 end)

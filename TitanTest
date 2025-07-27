@@ -485,9 +485,14 @@ local Forsaken = {
 {Name = "Headlock", ID = 97992194141034},
 {Name = "Gangdance", ID = 121267065315946},
 {Name = "Bluelock", ID = 76975616044095},
-{Name = "test1", ID = 110536141087568},
-{Name = "test2", ID = 103112841595182},
-{Name = "tst3", ID = 95650849617284},
+{Name = "Headlock V2", ID = 110536141087568},
+{Name = "Dip", ID = 103112841595182},
+{Name = "Simple", ID = 95650849617284},
+{Name = "So Retro", ID = 125239534389442}
+{Name = "Mafiosos hat ", ID = 108665782885630}
+{Name = "Mafiosos dance ", ID = 76038781746720}
+
+
 }
 
 for i, v in pairs(Forsaken) do
@@ -518,7 +523,7 @@ end
 
 CreateAnimation("Idle", 127363501840653)
 CreateAnimation("Walk", 110246326884421)
-CreateAnimation("Jump", 84397577392351)
+CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
 
 game:GetService("RunService").Heartbeat:Connect(function()
@@ -837,4 +842,39 @@ task.delay(2, function()
             RootPart.CFrame = RootPart.CFrame + Vector3.new(0, 3, 0)
         end)
     end
+end)
+
+
+-- Create a draggable Attack Button
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "AttackUI"
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 100, 0, 40)
+button.Position = UDim2.new(0.5, -50, 0.9, -20)
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+button.Text = "Attack"
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Draggable = true
+button.Active = true
+button.Parent = screenGui
+
+-- Attack Animation
+local animation = Instance.new("Animation")
+animation.AnimationId = "rbxassetid://71308482162106"
+local track = humanoid:LoadAnimation(animation)
+
+button.MouseButton1Click:Connect(function()
+    if not track.IsPlaying then
+        track:Play()
+    end
+end)
+
+-- Remove button on death
+humanoid.Died:Connect(function()
+    screenGui:Destroy()
 end)

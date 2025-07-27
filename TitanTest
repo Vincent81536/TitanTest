@@ -881,38 +881,38 @@ RunButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Fixed-position "Attack" button added like the "Run" button
+-- "Hit" button added like "Run" and "Attack"
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AttackGUI"
+screenGui.Name = "HitGUI"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
-local attackButton = Instance.new("TextButton")
-attackButton.Name = "AttackButton"
-attackButton.Size = UDim2.new(0, 100, 0, 50)
-attackButton.Position = UDim2.new(0, 270, 0.75, 0)
-attackButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-attackButton.BorderSizePixel = 0
-attackButton.Text = "Attack"
-attackButton.TextScaled = true
-attackButton.TextColor3 = Color3.new(1, 1, 1)
-attackButton.Font = Enum.Font.GothamBold
-attackButton.Parent = screenGui
+local hitButton = Instance.new("TextButton")
+hitButton.Name = "HitButton"
+hitButton.Size = UDim2.new(0, 100, 0, 50)
+hitButton.Position = UDim2.new(0, 380, 0.75, 0) -- positioned to the right
+hitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+hitButton.BorderSizePixel = 0
+hitButton.Text = "Hit"
+hitButton.TextScaled = true
+hitButton.TextColor3 = Color3.new(1, 1, 1)
+hitButton.Font = Enum.Font.GothamBold
+hitButton.Parent = screenGui
 
-local attackAnim = Instance.new("Animation")
-attackAnim.AnimationId = "rbxassetid://71308482162106"
-local attackTrack = humanoid:LoadAnimation(attackAnim)
+local hitAnim = Instance.new("Animation")
+hitAnim.AnimationId = "rbxassetid://71308482162106"
+local hitTrack = humanoid:LoadAnimation(hitAnim)
 
-attackButton.MouseButton1Click:Connect(function()
-	if not attackTrack.IsPlaying then
-		attackTrack:Play()
-	end
+hitButton.MouseButton1Click:Connect(function()
+    if not hitTrack.IsPlaying then
+        hitTrack:Play()
+    end
 end)
 
 humanoid.Died:Connect(function()
-	if screenGui then screenGui:Destroy() end
+    if screenGui then screenGui:Destroy() end
 end)

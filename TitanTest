@@ -845,37 +845,38 @@ end)
 
 -- LocalScript inside StarterGui
 
--- Create the ScreenGui
+-- Wait for player
+local player = game.Players.LocalPlayer
+
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AttackGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = true -- This ensures it resets on death
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
--- Create the Attack Button
+-- Create Attack Button
 local attackButton = Instance.new("TextButton")
 attackButton.Name = "AttackButton"
 attackButton.Size = UDim2.new(0, 120, 0, 40)
 attackButton.Position = UDim2.new(0.5, -60, 0.5, -20)
-attackButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-attackButton.TextColor3 = Color3.new(1,1,1)
+attackButton.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
+attackButton.TextColor3 = Color3.new(1, 1, 1) -- White text
 attackButton.Font = Enum.Font.GothamBold
 attackButton.TextSize = 18
 attackButton.Text = "Attack"
-attackButton.Parent = screenGui
 attackButton.Active = true
 attackButton.Draggable = true
+attackButton.Parent = screenGui
 
--- Play Animation on Click
+-- Animation setup
 local animationId = "rbxassetid://71308482162106"
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+local hasPlayed = false
 
-local function playAttackAnimation()
-	-- Wait for character if needed
-	if not character or not character:FindFirstChild("Humanoid") then
-		character = player.Character or player.CharacterAdded:Wait()
-	end
+attackButton.MouseButton1Click:Connect(function()
+	if hasPlayed then return end
+	hasPlayed = true
 
+	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
 	if humanoid then
 		local animation = Instance.new("Animation")
@@ -883,6 +884,4 @@ local function playAttackAnimation()
 		local track = humanoid:LoadAnimation(animation)
 		track:Play()
 	end
-end
-
-attackButton.MouseButton1Click:Connect(playAttackAnimation)
+end)

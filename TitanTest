@@ -488,11 +488,9 @@ local Forsaken = {
 {Name = "Headlock V2", ID = 110536141087568},
 {Name = "Dip", ID = 103112841595182},
 {Name = "Simple", ID = 95650849617284},
-{Name = "So Retro", ID = 125239534389442}
-{Name = "Mafiosos hat ", ID = 108665782885630}
-{Name = "Mafiosos dance ", ID = 76038781746720}
-
-
+{Name = "So Retro", ID = 125239534389442},
+{Name = "Mafiosos hat ", ID = 108665782885630},
+{Name = "Mafiosos dance ", ID = 76038781746720},
 }
 
 for i, v in pairs(Forsaken) do
@@ -880,3 +878,42 @@ RunButton.MouseButton1Click:Connect(function()
 		RunButton.Text = "Run"
 	end
 end)
+
+-- Insert "Hit" button into existing Disbelief Hub GUI
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Wait for the Disbelief Hub GUI to load
+local screenGui = player:WaitForChild("PlayerGui"):WaitForChild("DisbeliefHub") -- Replace with actual GUI name if different
+local baseButton = screenGui:FindFirstChild("RunButton", true) -- Cloning "Run" button for style
+
+if baseButton then
+    local hitButton = baseButton:Clone()
+    hitButton.Name = "HitButton"
+    hitButton.Text = "Hit"
+    hitButton.Position = UDim2.new(0, baseButton.Position.X.Offset + 110, baseButton.Position.Y.Scale, baseButton.Position.Y.Offset) -- Next to Run
+    hitButton.Parent = baseButton.Parent
+
+    -- Animation setup
+    local hitAnim = Instance.new("Animation")
+    hitAnim.AnimationId = "rbxassetid://71308482162106"
+    local hitTrack = humanoid:LoadAnimation(hitAnim)
+
+    hitButton.MouseButton1Click:Connect(function()
+        if not hitTrack.IsPlaying then
+            hitTrack:Play()
+        end
+    end)
+
+    -- Remove on death
+    humanoid.Died:Connect(function()
+        if hitButton and hitButton.Parent then
+            hitButton:Destroy()
+        end
+    end)
+else
+    warn("Could not find base Run button to clone for Hit button.")
+end
+

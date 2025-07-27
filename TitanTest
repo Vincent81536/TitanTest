@@ -491,6 +491,7 @@ local Forsaken = {
 {Name = "So Retro", ID = 125239534389442},
 {Name = "Mafiosos hat ", ID = 108665782885630},
 {Name = "Mafiosos dance ", ID = 76038781746720},
+{Name = "Mafiosos hit ", ID = 71308482162106},
 }
 
 for i, v in pairs(Forsaken) do
@@ -879,41 +880,27 @@ RunButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Insert "Hit" button into existing Disbelief Hub GUI
+-- Hit button setup (styled like Run button, plays animation on click)
+local HitButton = Instance.new("TextButton")
+HitButton.Size = UDim2.new(0, 100, 0, 50)
+HitButton.Position = UDim2.new(0, 270, 0.75, 0) -- Appears next to Run
+HitButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+HitButton.Text = "Hit"
+HitButton.TextColor3 = Color3.new(1, 1, 1)
+HitButton.Font = Enum.Font.GothamBold
+HitButton.TextScaled = true
+HitButton.Parent = Gui -- assumes your GUI is named "Gui"
 
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+local hitAnim = Instance.new("Animation")
+hitAnim.AnimationId = "rbxassetid://71308482162106"
+local hitTrack = Humanoid:LoadAnimation(hitAnim)
 
--- Wait for the Disbelief Hub GUI to load
-local screenGui = player:WaitForChild("PlayerGui"):WaitForChild("DisbeliefHub") -- Replace with actual GUI name if different
-local baseButton = screenGui:FindFirstChild("RunButton", true) -- Cloning "Run" button for style
+HitButton.MouseButton1Click:Connect(function()
+	if not hitTrack.IsPlaying then
+		hitTrack:Play()
+	end
+end)
 
-if baseButton then
-    local hitButton = baseButton:Clone()
-    hitButton.Name = "HitButton"
-    hitButton.Text = "Hit"
-    hitButton.Position = UDim2.new(0, baseButton.Position.X.Offset + 110, baseButton.Position.Y.Scale, baseButton.Position.Y.Offset) -- Next to Run
-    hitButton.Parent = baseButton.Parent
-
-    -- Animation setup
-    local hitAnim = Instance.new("Animation")
-    hitAnim.AnimationId = "rbxassetid://71308482162106"
-    local hitTrack = humanoid:LoadAnimation(hitAnim)
-
-    hitButton.MouseButton1Click:Connect(function()
-        if not hitTrack.IsPlaying then
-            hitTrack:Play()
-        end
-    end)
-
-    -- Remove on death
-    humanoid.Died:Connect(function()
-        if hitButton and hitButton.Parent then
-            hitButton:Destroy()
-        end
-    end)
-else
-    warn("Could not find base Run button to clone for Hit button.")
-end
-
+Humanoid.Died:Connect(function()
+	if HitButton then HitButton:Destroy() end
+end)

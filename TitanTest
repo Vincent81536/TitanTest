@@ -475,7 +475,7 @@ local R6Dances = {
 }
 
 local Forsaken = {
-{Name = "KJ Dropkick", ID = 17140902079},
+{Name = "KJ Dropkick", ID = 14516273501},
 {Name = "Shucks", ID = 74238051754912},
 {Name = "Silly Billy", ID = 107464355830477},
 {Name = "Subterfuge", ID = 87482480949358},

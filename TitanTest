@@ -521,7 +521,7 @@ end)
 end
 end
 
-CreateAnimation("Idle", 132196401232277)
+CreateAnimation("Idle", 127363501840653)
 CreateAnimation("Walk", 110246326884421)
 CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
@@ -639,31 +639,60 @@ end)
 end
 
 createRunToggleUI()
+
 -- ✅ Register attack animation
 CreateAnimation("Mafiosos hit ", 71308482162106)
 
--- ✅ Create floating Attack button
-local AttackUI = Instance.new("ScreenGui")
-AttackUI.Name = "AttackUI"
-AttackUI.ResetOnSpawn = false
-AttackUI.Parent = game.CoreGui
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-local AttackButton = Instance.new("TextButton")
-AttackButton.Size = UDim2.new(0, 100, 0, 40)
-AttackButton.Position = UDim2.new(0, 140, 0.5, 0)
-AttackButton.Text = "Attack"
-AttackButton.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
-AttackButton.TextColor3 = Color3.new(1, 1, 1)
-AttackButton.Font = Enum.Font.GothamBold
-AttackButton.TextSize = 18
-AttackButton.Active = true
-AttackButton.Draggable = true
-AttackButton.Parent = AttackUI
+local function createAttackUI()
+    if game.CoreGui:FindFirstChild("AttackUI") then
+        game.CoreGui.AttackUI:Destroy()
+    end
 
-AttackButton.MouseButton1Click:Connect(function()
-    PlayAnim(Character, Anims["Mafiosos hit "], 0.1, 1)
-end) 
+    local AttackUI = Instance.new("ScreenGui")
+    AttackUI.Name = "AttackUI"
+    AttackUI.ResetOnSpawn = false
+    AttackUI.Parent = game.CoreGui
 
+    local AttackButton = Instance.new("TextButton")
+    AttackButton.Size = UDim2.new(0, 100, 0, 40)
+    AttackButton.Position = UDim2.new(0, 140, 0.5, 0)
+    AttackButton.Text = "Attack"
+    AttackButton.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+    AttackButton.TextColor3 = Color3.new(1, 1, 1)
+    AttackButton.Font = Enum.Font.GothamBold
+    AttackButton.TextSize = 18
+    AttackButton.Active = true
+    AttackButton.Draggable = true
+    AttackButton.Parent = AttackUI
+
+    AttackButton.MouseButton1Click:Connect(function()
+        PlayAnim(Character, Anims["Mafiosos hit "], 0.1, 1)
+    end)
+
+    local humanoid = Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Died:Connect(function()
+            if AttackUI then
+                AttackUI:Destroy()
+            end
+        end)
+    end
+end
+
+-- Create the button now, and re-create on respawn
+player.CharacterAdded:Connect(function(char)
+    Character = char
+    task.wait(0.5)
+    createAttackUI()
+end)
+
+if player.Character then
+    task.wait(0.5)
+    createAttackUI()
+end
 -- Modify heartbeat to play run animation only during movement if run mode is enabled
 game:GetService("RunService").Heartbeat:Connect(function()
     for _, v in pairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -866,3 +895,34 @@ task.delay(2, function()
 end)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/attack/refs/heads/main/attack"))()
+
+
+-- ✅ Improved Anti-Shake & Rig Stabilizer
+task.spawn(function()
+    while true do
+        if Character and Character:IsDescendantOf(workspace) then
+            local root = Character:FindFirstChild("HumanoidRootPart")
+            if root then
+                for _, part in pairs(Character:GetDescendants()) do
+                    if part:IsA("BasePart") and not part.Anchored then
+                        part.Velocity = Vector3.zero
+                        part.RotVelocity = Vector3.zero
+                        part.AssemblyLinearVelocity = Vector3.zero
+                        part.AssemblyAngularVelocity = Vector3.zero
+
+                        -- Re-attach far drifting parts
+                        if (part.Position - root.Position).Magnitude > 15 then
+                            part.CFrame = root.CFrame * CFrame.new(0, 0, -1)
+                        end
+
+                        -- Set local network ownership
+                        pcall(function()
+                            part:SetNetworkOwner(game.Players.LocalPlayer)
+                        end)
+                    end
+                end
+            end
+        end
+        wait(0.2)
+    end
+end)

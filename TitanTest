@@ -695,7 +695,6 @@ if player.Character then
     task.wait(0.5)
     createAttackUI()
 end
--- Modify heartbeat to play run animation only during movement if run mode is enabled
 game:GetService("RunService").Heartbeat:Connect(function()
     for _, v in pairs(Humanoid:GetPlayingAnimationTracks()) do
         v:Stop(0)
@@ -711,18 +710,21 @@ game:GetService("RunService").Heartbeat:Connect(function()
             PlayAnim(Character, Anims.Jump, 0.1, 1)
         end
         Falled, Idled, Walked = false, false, false
+
     elseif TorsoVerticalVelocity < 1 and not HitFloor then
         if not Falled then
             Falled = true
             PlayAnim(Character, Anims.Fall, 0.1, 1)
         end
         Jumped, Idled, Walked = false, false, false
+
     elseif TorsoVelocity < 1 and HitFloor then
         if not Idled then
             Idled = true
             PlayAnim(Character, Anims.Idle, 0.1, 0.1)
         end
         Jumped, Falled, Walked = false, false, false
+
     elseif TorsoVelocity > 1 and HitFloor then
         if isRunning then
             if not Walked then
@@ -736,6 +738,17 @@ game:GetService("RunService").Heartbeat:Connect(function()
             end
         end
         Jumped, Falled, Idled = false, false, false
+    end
+
+    -- ⚙️ Smart Animator Toggle System
+    local animator = Humanoid:FindFirstChildOfClass("Animator")
+    if TorsoVelocity < 0.1 and HitFloor then
+        if animator then animator:Destroy() end
+    else
+        if not animator then
+            local newAnimator = Instance.new("Animator")
+            newAnimator.Parent = Humanoid
+        end
     end
 end)
 

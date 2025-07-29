@@ -682,7 +682,6 @@ local function createAttackUI()
     end
 end
 
---Idle button
 -- ✅ Register Idle animation
 CreateAnimation("Idle", 132196401232277)
 
@@ -704,21 +703,42 @@ IdleButton.Draggable = true
 IdleButton.Active = true
 IdleButton.Parent = IdleUI
 
-local isIdlePlaying = false
+local isIdleFrozen = false
+local idleFreezeLoop
+
 IdleButton.MouseButton1Click:Connect(function()
-    isIdlePlaying = not isIdlePlaying
-    if isIdlePlaying then
+    isIdleFrozen = not isIdleFrozen
+    if isIdleFrozen then
         StopAnim(Character, Anims.Walk)
         StopAnim(Character, Anims.Run)
         PlayAnim(Character, Anims.Idle, 0.1, 1)
         IdleButton.Text = "Unidle"
+
+        -- Freeze all rig parts
+        idleFreezeLoop = task.spawn(function()
+            while isIdleFrozen do
+                for _, part in pairs(Character:GetDescendants()) do
+                    if part:IsA("BasePart") and not part.Anchored then
+                        part.Velocity = Vector3.zero
+                        part.RotVelocity = Vector3.zero
+                        part.AssemblyLinearVelocity = Vector3.zero
+                        part.AssemblyAngularVelocity = Vector3.zero
+                        part:SetNetworkOwner(game.Players.LocalPlayer)
+                    end
+                end
+                task.wait(0.15)
+            end
+        end)
     else
-        StopAnim(Character, Anims.Idle)
         IdleButton.Text = "Idle"
+        StopAnim(Character, Anims.Idle)
+        if idleFreezeLoop then
+            task.cancel(idleFreezeLoop)
+        end
     end
 end)
 
--- ✅ Clean up button on death/reset
+-- ✅ Clean up on death/reset
 game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
     if IdleUI then
         IdleUI:Destroy()

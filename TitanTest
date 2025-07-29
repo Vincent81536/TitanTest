@@ -178,7 +178,7 @@ UseServerBreakJoints = true,
 })
 Name = game.Players.LocalPlayer.Name
 Character = workspace[Name]
--- ✅ Anti-shake & stable physics fixes below
+-- ✅ Emperyean Anti-Shake Fix
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
@@ -187,9 +187,25 @@ local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
 local animator = Humanoid and Humanoid:FindFirstChildOfClass("Animator")
 if animator then animator:Destroy() end
 
+-- Disable physics sleep to prevent stutter
 settings().Physics.AllowSleep = false
+
+-- Set max simulation radius to give full control
 sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-Character:WaitForChild("HumanoidRootPart").Anchored = false
+
+-- Make sure character isn't anchored
+local RootPart = Character:FindFirstChild("HumanoidRootPart")
+if RootPart then
+    RootPart.Anchored = false
+end
+
+-- Optional: stabilize velocity if shaking persists at idle
+RunService.Heartbeat:Connect(function()
+    if RootPart and Humanoid and Humanoid.MoveDirection.Magnitude == 0 then
+        RootPart.Velocity = Vector3.zero
+    end
+end)
+
 else
 print('choose an api next time :(')
 return end

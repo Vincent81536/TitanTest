@@ -522,7 +522,7 @@ end
 end
 
 CreateAnimation("Idle", 132196401232277)
-CreateAnimation("Walk", 110246326884421)
+CreateAnimation("Walk", 96901225702491)
 CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
 

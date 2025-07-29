@@ -527,9 +527,7 @@ CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
 
 game:GetService("RunService").Heartbeat:Connect(function()
-for i,v in pairs(Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()) do
-v:Stop(0)
-end
+
 local HitFloor,HitPosition = Raycast(RootPart.Position, (CFrame.new(RootPart.Position, RootPart.Position + Vector3.new(0, -1, 0))).LookVector, 4, Character)
 TorsoVelocity = (RootPart.Velocity).Magnitude
 TorsoVerticalVelocity = RootPart.Velocity.Y
@@ -592,6 +590,19 @@ So, people, here you go. Another ‘Baseless Accusations & Keyboard Rage!‘ epi
 
 
 -- Register the Run animation
+
+-- ✅ Set network ownership once on character spawn
+task.delay(1, function()
+    for _, part in pairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            pcall(function()
+                part:SetNetworkOwner(game.Players.LocalPlayer)
+            end)
+        end
+    end
+end)
+
+
 CreateAnimation("Run", 96901225702491)
 
 -- Track run state
@@ -754,8 +765,8 @@ task.spawn(function()
             for _, part in pairs(Character:GetDescendants()) do
                 if part:IsA("BasePart") then
                     -- Reset physics
-                    part.Velocity = Vector3.zero
-                    part.RotVelocity = Vector3.zero
+                    if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
+                    if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
                     part.AssemblyLinearVelocity = Vector3.zero
                     part.AssemblyAngularVelocity = Vector3.zero
 
@@ -765,9 +776,7 @@ task.spawn(function()
                     end
 
                     -- Ensure client owns it
-                    pcall(function()
-                        part:SetNetworkOwner(game.Players.LocalPlayer)
-                    end)
+                    
                 end
             end
         end
@@ -787,8 +796,8 @@ task.spawn(function()
                 if isIdle then
                     for _, part in pairs(Character:GetDescendants()) do
                         if part:IsA("BasePart") and not part.Anchored then
-                            part.Velocity = Vector3.zero
-                            part.RotVelocity = Vector3.zero
+                            if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
+                            if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
                             part.AssemblyLinearVelocity = Vector3.zero
                             part.AssemblyAngularVelocity = Vector3.zero
                             if (part.Position - root.Position).Magnitude < 5 then
@@ -811,8 +820,8 @@ task.spawn(function()
 			if isIdle then
 				for _, part in pairs(Character:GetDescendants()) do
 					if part:IsA("BasePart") and not part.Anchored then
-						part.Velocity = Vector3.zero
-						part.RotVelocity = Vector3.zero
+						if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
+						if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
 						part.AssemblyLinearVelocity = Vector3.zero
 						part.AssemblyAngularVelocity = Vector3.zero
 
@@ -905,8 +914,8 @@ task.spawn(function()
             if root then
                 for _, part in pairs(Character:GetDescendants()) do
                     if part:IsA("BasePart") and not part.Anchored then
-                        part.Velocity = Vector3.zero
-                        part.RotVelocity = Vector3.zero
+                        if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
+                        if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
                         part.AssemblyLinearVelocity = Vector3.zero
                         part.AssemblyAngularVelocity = Vector3.zero
 
@@ -916,9 +925,7 @@ task.spawn(function()
                         end
 
                         -- Set local network ownership
-                        pcall(function()
-                            part:SetNetworkOwner(game.Players.LocalPlayer)
-                        end)
+                        
                     end
                 end
             end

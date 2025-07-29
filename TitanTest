@@ -178,31 +178,88 @@ UseServerBreakJoints = true,
 })
 Name = game.Players.LocalPlayer.Name
 Character = workspace[Name]
--- ✅ Emperyean Anti-Shake Fix
+-- ✅ Emperyean Rig Stabilized Animation System (like Optimized)
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local Humanoid = Character:WaitForChild("Humanoid")
+local RootPart = Character:WaitForChild("HumanoidRootPart")
 
-local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
-local animator = Humanoid and Humanoid:FindFirstChildOfClass("Animator")
+-- Kill default Animator to prevent shaking
+local animator = Humanoid:FindFirstChildOfClass("Animator")
 if animator then animator:Destroy() end
 
--- Disable physics sleep to prevent stutter
+-- Prevent physics sleep and boost simulation accuracy
 settings().Physics.AllowSleep = false
-
--- Set max simulation radius to give full control
 sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 
--- Make sure character isn't anchored
-local RootPart = Character:FindFirstChild("HumanoidRootPart")
-if RootPart then
-    RootPart.Anchored = false
+-- Setup clean animation system
+local Anims = Instance.new("Folder", workspace)
+Anims.Name = "Anims"
+
+function CreateAnimation(Name, ID)
+    local success, anim = pcall(function()
+        return game:GetObjects("rbxassetid://" .. ID)[1]
+    end)
+    if success and anim then
+        anim.Name = Name
+        anim.Parent = Anims
+    else
+        warn("Failed to load animation:", Name, ID)
+    end
 end
 
--- Optional: stabilize velocity if shaking persists at idle
+function PlayAnim(Name, Fade, Speed)
+    local anim = Anims:FindFirstChild(Name)
+    if not anim then return end
+    for _, track in Humanoid:GetPlayingAnimationTracks() do
+        track:Stop(Fade or 0.1)
+    end
+    local track = Humanoid:LoadAnimation(anim)
+    track:Play(Fade or 0.1, Speed or 1)
+end
+
+-- Load core animations
+CreateAnimation("Idle", 132196401232277)
+CreateAnimation("Walk", 96901225702491)
+CreateAnimation("Run", 96901225702491)
+CreateAnimation("Jump", 103148094958443)
+CreateAnimation("Fall", 90270295182351)
+
+-- Animation state handler
+local Jumped, Falled, Idled, Walked = false, false, false, false
+
 RunService.Heartbeat:Connect(function()
-    if RootPart and Humanoid and Humanoid.MoveDirection.Magnitude == 0 then
-        RootPart.Velocity = Vector3.zero
+    local velocity = RootPart.Velocity
+    local floor = workspace:FindPartOnRay(Ray.new(RootPart.Position, Vector3.new(0, -1, 0) * 4), Character)
+
+    if velocity.Y > 1 and not floor then
+        if not Jumped then
+            Jumped = true
+            PlayAnim("Jump")
+        end
+        Falled, Idled, Walked = false, false, false
+
+    elseif velocity.Y < -1 and not floor then
+        if not Falled then
+            Falled = true
+            PlayAnim("Fall")
+        end
+        Jumped, Idled, Walked = false, false, false
+
+    elseif velocity.Magnitude < 1 and floor then
+        if not Idled then
+            Idled = true
+            PlayAnim("Idle", 0.1, 0.1)
+        end
+        Jumped, Falled, Walked = false, false, false
+
+    elseif velocity.Magnitude >= 1 and floor then
+        if not Walked then
+            Walked = true
+            PlayAnim("Run")
+        end
+        Jumped, Falled, Idled = false, false, false
     end
 end)
 

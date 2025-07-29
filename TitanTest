@@ -765,10 +765,10 @@ task.spawn(function()
             for _, part in pairs(Character:GetDescendants()) do
                 if part:IsA("BasePart") then
                     -- Reset physics
-                    if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
-                    if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
-                    part.AssemblyLinearVelocity = Vector3.zero
-                    part.AssemblyAngularVelocity = Vector3.zero
+                    
+                    
+                    
+                    
 
                     -- Reset CFrame if detached
                     if (part.Position - Character.HumanoidRootPart.Position).Magnitude > 15 then
@@ -796,10 +796,10 @@ task.spawn(function()
                 if isIdle then
                     for _, part in pairs(Character:GetDescendants()) do
                         if part:IsA("BasePart") and not part.Anchored then
-                            if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
-                            if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
-                            part.AssemblyLinearVelocity = Vector3.zero
-                            part.AssemblyAngularVelocity = Vector3.zero
+                            
+                            
+                            
+                            
                             if (part.Position - root.Position).Magnitude < 5 then
                                 part.CFrame = part.CFrame
                             end
@@ -820,10 +820,10 @@ task.spawn(function()
 			if isIdle then
 				for _, part in pairs(Character:GetDescendants()) do
 					if part:IsA("BasePart") and not part.Anchored then
-						if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
-						if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
-						part.AssemblyLinearVelocity = Vector3.zero
-						part.AssemblyAngularVelocity = Vector3.zero
+						
+						
+						
+						
 
 						-- Slight refresh to kill drift
 						if (part.Position - root.Position).Magnitude < 5 then
@@ -906,6 +906,24 @@ end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/attack/refs/heads/main/attack"))()
 
 
+
+-- ✅ Final Rig Stability: Hard Weld all parts to HumanoidRootPart
+local function HardWeldAllParts()
+    local root = Character:FindFirstChild("HumanoidRootPart")
+    for _, part in pairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") and part ~= root then
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = root
+            weld.Part1 = part
+            weld.Parent = root
+            part.Anchored = false
+        end
+    end
+end
+
+task.delay(1, HardWeldAllParts)
+
+
 -- ✅ Improved Anti-Shake & Rig Stabilizer
 task.spawn(function()
     while true do
@@ -914,10 +932,10 @@ task.spawn(function()
             if root then
                 for _, part in pairs(Character:GetDescendants()) do
                     if part:IsA("BasePart") and not part.Anchored then
-                        if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.Velocity = Vector3.zero end
-                        if RootPart.Velocity.Magnitude < 0.2 and math.abs(RootPart.Velocity.Y) < 0.2 then part.RotVelocity = Vector3.zero end
-                        part.AssemblyLinearVelocity = Vector3.zero
-                        part.AssemblyAngularVelocity = Vector3.zero
+                        
+                        
+                        
+                        
 
                         -- Re-attach far drifting parts
                         if (part.Position - root.Position).Magnitude > 15 then
@@ -933,3 +951,16 @@ task.spawn(function()
         wait(0.2)
     end
 end)
+
+
+-- ✅ Optional: Anchor all parts when character dies
+local humanoid = Character:FindFirstChildOfClass("Humanoid")
+if humanoid then
+    humanoid.Died:Connect(function()
+        for _, part in pairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Anchored = true
+            end
+        end
+    end)
+end

@@ -257,6 +257,7 @@ local DancesA = GUI:Tab("Animations - R6 Dances", "http://www.roblox.com/asset/?
 local DancesB = GUI:Tab("Animations - Forsaken", "http://www.roblox.com/asset/?id=6023426915")
 
 local R6Dances = {
+{Name = "Idle", ID = 132196401232277},
 {Name = "Boombox Dance", ID = 84471848998012, SoundID = 1839931160},
 {Divider = true},  
 {Name = "Cafeteria", ID = 111079857314277},
@@ -475,6 +476,7 @@ local R6Dances = {
 }
 
 local Forsaken = {
+{Name = "Idle", ID = 132196401232277},
 {Name = "KJ Dropkick", ID = 17354976067},
 {Name = "Shucks", ID = 74238051754912},
 {Name = "Silly Billy", ID = 107464355830477},
@@ -639,80 +641,6 @@ end)
 end
 
 createRunToggleUI()
--- Register the Freeze Idle animation
-CreateAnimation("FreezeIdle", 132196401232277)
-
--- Track freeze state
-local isFrozen = false
-
--- Persistent GUI for Freeze Idle Toggle
-local function createFreezeToggleUI()
-    if game.CoreGui:FindFirstChild("FreezeToggleUI") then
-        game.CoreGui.FreezeToggleUI:Destroy()
-    end
-
-    local FreezeToggleUI = Instance.new("ScreenGui")
-    FreezeToggleUI.Name = "FreezeToggleUI"
-    FreezeToggleUI.ResetOnSpawn = false
-    FreezeToggleUI.Parent = game.CoreGui
-
-    local FreezeButton = Instance.new("TextButton")
-    FreezeButton.Size = UDim2.new(0, 120, 0, 40)
-    FreezeButton.Position = UDim2.new(0, 140, 0.5, 0)
-    FreezeButton.Text = "Freeze Idle"
-    FreezeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    FreezeButton.TextColor3 = Color3.new(1, 1, 1)
-    FreezeButton.Font = Enum.Font.GothamBold
-    FreezeButton.TextSize = 18
-    FreezeButton.Draggable = true
-    FreezeButton.Active = true
-    FreezeButton.Parent = FreezeToggleUI
-
-    local function freezeRigs()
-        for _, part in pairs(Character:GetDescendants()) do
-            if part:IsA("BasePart") and not part.Anchored then
-                part.Velocity = Vector3.zero
-                part.RotVelocity = Vector3.zero
-                part.AssemblyLinearVelocity = Vector3.zero
-                part.AssemblyAngularVelocity = Vector3.zero
-            end
-        end
-    end
-
-    FreezeButton.MouseButton1Click:Connect(function()
-        isFrozen = not isFrozen
-        FreezeButton.Text = isFrozen and "Unfreeze" or "Freeze Idle"
-
-        if isFrozen then
-            if not Anims:FindFirstChild("FreezeIdle") then
-                CreateAnimation("FreezeIdle", 132196401232277)
-            end
-
-            local track = Anims["FreezeIdle"]
-            if track then
-                track:Play(0.1, 1)
-                wait(0.1)
-                track:AdjustSpeed(0)
-            end
-
-            freezeRigs()
-        else
-            -- Unfreeze logic: Stop animation and allow movement again
-            if Anims["FreezeIdle"] then
-                Anims["FreezeIdle"]:Stop()
-            end
-        end
-    end)
-
-    -- Auto-remove on death/reset
-    Humanoid.Died:Connect(function()
-        if FreezeToggleUI then
-            FreezeToggleUI:Destroy()
-        end
-    end)
-end
-
-createFreezeToggleUI()
 
 -- ✅ Register attack animation
 CreateAnimation("Mafiosos hit ", 71308482162106)

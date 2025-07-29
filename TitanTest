@@ -568,6 +568,7 @@ CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
 
 game:GetService("RunService").Heartbeat:Connect(function()
+if not isManualIdle then
 for i,v in pairs(Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()) do
 v:Stop(0)
 end
@@ -619,6 +620,8 @@ StopAnim(Character, Anims.Jump)
 StopAnim(Character, Anims.Fall)
 StopAnim(Character, Anims.Idle)
 end
+
+end
 end)
 
 
@@ -641,6 +644,48 @@ local Humanoid = Character:FindFirstChildOfClass("Humanoid")
 
 -- Persistent GUI for Run Toggle
 local function createRunToggleUI()
+
+-- Manual Idle toggle state
+local isManualIdle = false
+
+-- Persistent GUI for Idle Toggle
+local function createIdleToggleUI()
+    if game.CoreGui:FindFirstChild("IdleToggleUI") then
+        game.CoreGui.IdleToggleUI:Destroy()
+    end
+
+    local IdleToggleUI = Instance.new("ScreenGui")
+    IdleToggleUI.Name = "IdleToggleUI"
+    IdleToggleUI.ResetOnSpawn = false
+    IdleToggleUI.Parent = game.CoreGui
+
+    local IdleButton = Instance.new("TextButton")
+    IdleButton.Size = UDim2.new(0, 100, 0, 40)
+    IdleButton.Position = UDim2.new(0, 20, 0.5, 50) -- below Run button
+    IdleButton.Text = "Idle"
+    IdleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    IdleButton.TextColor3 = Color3.new(1, 1, 1)
+    IdleButton.Font = Enum.Font.GothamBold
+    IdleButton.TextSize = 18
+    IdleButton.Draggable = true
+    IdleButton.Active = true
+    IdleButton.Parent = IdleToggleUI
+
+    IdleButton.MouseButton1Click:Connect(function()
+        isManualIdle = not isManualIdle
+        IdleButton.Text = isManualIdle and "Unidle" or "Idle"
+
+        if isManualIdle then
+            for _, v in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                v:Stop(0)
+            end
+            PlayAnim(Character, Anims.Idle, 0.1, 1)
+        end
+    end)
+end
+
+createIdleToggleUI()
+
     if game.CoreGui:FindFirstChild("RunToggleUI") then
         game.CoreGui.RunToggleUI:Destroy()
     end
@@ -680,6 +725,48 @@ end)
 end
 
 createRunToggleUI()
+
+-- Manual Idle toggle state
+local isManualIdle = false
+
+-- Persistent GUI for Idle Toggle
+local function createIdleToggleUI()
+    if game.CoreGui:FindFirstChild("IdleToggleUI") then
+        game.CoreGui.IdleToggleUI:Destroy()
+    end
+
+    local IdleToggleUI = Instance.new("ScreenGui")
+    IdleToggleUI.Name = "IdleToggleUI"
+    IdleToggleUI.ResetOnSpawn = false
+    IdleToggleUI.Parent = game.CoreGui
+
+    local IdleButton = Instance.new("TextButton")
+    IdleButton.Size = UDim2.new(0, 100, 0, 40)
+    IdleButton.Position = UDim2.new(0, 20, 0.5, 50) -- below Run button
+    IdleButton.Text = "Idle"
+    IdleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    IdleButton.TextColor3 = Color3.new(1, 1, 1)
+    IdleButton.Font = Enum.Font.GothamBold
+    IdleButton.TextSize = 18
+    IdleButton.Draggable = true
+    IdleButton.Active = true
+    IdleButton.Parent = IdleToggleUI
+
+    IdleButton.MouseButton1Click:Connect(function()
+        isManualIdle = not isManualIdle
+        IdleButton.Text = isManualIdle and "Unidle" or "Idle"
+
+        if isManualIdle then
+            for _, v in pairs(Humanoid:GetPlayingAnimationTracks()) do
+                v:Stop(0)
+            end
+            PlayAnim(Character, Anims.Idle, 0.1, 1)
+        end
+    end)
+end
+
+createIdleToggleUI()
+
 
 -- ✅ Register attack animation
 CreateAnimation("Mafiosos hit ", 71308482162106)
@@ -736,6 +823,7 @@ if player.Character then
 end
 -- Modify heartbeat to play run animation only during movement if run mode is enabled
 game:GetService("RunService").Heartbeat:Connect(function()
+if not isManualIdle then
     for _, v in pairs(Humanoid:GetPlayingAnimationTracks()) do
         v:Stop(0)
     end
@@ -776,6 +864,8 @@ game:GetService("RunService").Heartbeat:Connect(function()
         end
         Jumped, Falled, Idled = false, false, false
     end
+
+end
 end)
 
 -- Add safety check after "Run away V2" ends
@@ -825,17 +915,23 @@ task.spawn(function()
                 -- Skip stabilization during cinematic animation
             else
                 local isIdle = (root.Velocity.Magnitude < 0.1 and math.abs(root.Velocity.Y) < 0.1)
-                if isIdle then
-                    for _, part in pairs(Character:GetDescendants()) do
-                        if part:IsA("BasePart") and not part.Anchored then
-                            part.Velocity = Vector3.zero
-                            part.RotVelocity = Vector3.zero
-                            part.AssemblyLinearVelocity = Vector3.zero
-                            part.AssemblyAngularVelocity = Vector3.zero
-                            if (part.Position - root.Position).Magnitude < 5 then
-                                part.CFrame = part.CFrame
-                            end
-                        end
+                
+if isIdle then
+    for _, part in pairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") and not part.Anchored then
+            part.Velocity = Vector3.zero
+            part.RotVelocity = Vector3.zero
+            part.AssemblyLinearVelocity = Vector3.zero
+            part.AssemblyAngularVelocity = Vector3.zero
+
+            -- Smoothly pull part toward core (helps idle drift)
+            if (part.Position - root.Position).Magnitude < 5 then
+                part.CFrame = part.CFrame:lerp(root.CFrame * CFrame.new(0, 0, -1), 0.4)
+            end
+        end
+    end
+end
+
                     end
                 end
             end
@@ -849,19 +945,23 @@ task.spawn(function()
 			local root = Character:FindFirstChild("HumanoidRootPart")
 			local isIdle = (root.Velocity.Magnitude < 0.1 and math.abs(root.Velocity.Y) < 0.1)
 
-			if isIdle then
-				for _, part in pairs(Character:GetDescendants()) do
-					if part:IsA("BasePart") and not part.Anchored then
-						part.Velocity = Vector3.zero
-						part.RotVelocity = Vector3.zero
-						part.AssemblyLinearVelocity = Vector3.zero
-						part.AssemblyAngularVelocity = Vector3.zero
+			
+if isIdle then
+    for _, part in pairs(Character:GetDescendants()) do
+        if part:IsA("BasePart") and not part.Anchored then
+            part.Velocity = Vector3.zero
+            part.RotVelocity = Vector3.zero
+            part.AssemblyLinearVelocity = Vector3.zero
+            part.AssemblyAngularVelocity = Vector3.zero
 
-						-- Slight refresh to kill drift
-						if (part.Position - root.Position).Magnitude < 5 then
-							part.CFrame = part.CFrame
-						end
-					end
+            -- Smoothly pull part toward core (helps idle drift)
+            if (part.Position - root.Position).Magnitude < 5 then
+                part.CFrame = part.CFrame:lerp(root.CFrame * CFrame.new(0, 0, -1), 0.4)
+            end
+        end
+    end
+end
+
 				end
 			end
 		end

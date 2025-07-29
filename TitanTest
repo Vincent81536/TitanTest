@@ -951,7 +951,3 @@ task.spawn(function()
         wait(0.2)
     end
 end)
-Beta
-0 / 0
-used queries
-1

@@ -178,6 +178,23 @@ UseServerBreakJoints = true,
 })
 Name = game.Players.LocalPlayer.Name
 Character = workspace[Name]
+-- Use Krypton Reanimate instead of Emperyean
+Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/module/refs/heads/main/module"))()
+Character = Reanimate:GetCharacter()
+
+-- Anchor real character and hide it underground to prevent jiggle
+local RealCharacter = workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+if RealCharacter then
+    for _, part in pairs(RealCharacter:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Anchored = true
+            part.CFrame = part.CFrame + Vector3.new(0, -1000, 0)
+            part.Velocity = Vector3.zero
+            part.RotVelocity = Vector3.zero
+        end
+    end
+end
+
 else
 print('choose an api next time :(')
 return end

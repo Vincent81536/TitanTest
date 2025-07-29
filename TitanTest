@@ -592,7 +592,7 @@ So, people, here you go. Another ‘Baseless Accusations & Keyboard Rage!‘ epi
 
 
 -- Register the Run animation
-CreateAnimation("Run", 110246326884421)
+CreateAnimation("Run", 96901225702491)
 
 -- Track run state
 local isRunning = false

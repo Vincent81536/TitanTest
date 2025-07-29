@@ -178,94 +178,83 @@ UseServerBreakJoints = true,
 })
 Name = game.Players.LocalPlayer.Name
 Character = workspace[Name]
+-- ✅ Anti-shake & stable physics fixes below
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local Humanoid = Character:FindFirstChildWhichIsA("Humanoid")
+local animator = Humanoid and Humanoid:FindFirstChildOfClass("Animator")
+if animator then animator:Destroy() end
+
+settings().Physics.AllowSleep = false
+sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+Character:WaitForChild("HumanoidRootPart").Anchored = false
 else
 print('choose an api next time :(')
 return end
 
 -- YES I KNOW ABOVE IS TERRIBLE PLS STOP REMINDING ME 😭 
 
--- Emperyean Rig Stabilized Script (Optimized)
--- ✅ Anti-Shake / No Idle Animation / Clean Run Handler
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local Character = workspace:WaitForChild(LocalPlayer.Name)
-local Humanoid = Character:WaitForChild("Humanoid")
-local RootPart = Character:WaitForChild("HumanoidRootPart")
-
--- Kill default Animator to avoid conflict
-local animator = Humanoid:FindFirstChildOfClass("Animator")
-if animator then animator:Destroy() end
-
--- Disable sleep mode for physics
-settings().Physics.AllowSleep = false
-
--- Global simulation radius
-sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-
--- Idle + Animation Flags
-local Jumped, Falled, Idled, Walked = false, false, false, false
-local isRunning = false
+local RootPart = Character.HumanoidRootPart
+local Jumped,Falled,Idled,Walked = false,false,false,false
+local AnimatorModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/AnimatorModule/refs/heads/main/AnimatorModule"))()
 local Anims = Instance.new("Folder", workspace)
-Anims.Name = "Anims"
 
--- Basic Anim Loader
+
+local function SafeCheckGroundPosition()
+    if RootPart.Position.Y < -5 then -- adjust this Y threshold if needed
+        RootPart.CFrame = CFrame.new(RootPart.Position.X, 5, RootPart.Position.Z)
+    end
+end
+
+function Raycast(POSITION, DIRECTION, RANGE, IGNOREDECENDANTS)
+return workspace:FindPartOnRay(Ray.new(POSITION, DIRECTION.unit * RANGE), IGNOREDECENDANTS)
+end
+
+function LoadAnim(Rig, KeyFrameS)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+AnimatorModule[Rig][KeyFrameS.Name] = AnimatorModule:LoadAnimation(Rig, KeyFrameS)
+end
+
+function PlayAnim(Rig, Animation, AnimFade, AnimSpeed)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+if not AnimatorModule[Rig][Animation.Name] then
+AnimatorModule[Rig][Animation.Name] = AnimatorModule:LoadAnimation(Rig, Animation)
+end
+for Animation, Track in next, AnimatorModule[Rig] do
+if Animation ~= Animation.Name then
+Track:Stop()
+end
+end
+if not AnimatorModule[Rig][Animation.Name].IsPlaying then
+AnimatorModule[Rig][Animation.Name]:Play(AnimFade or 1, AnimSpeed or 1)
+end
+end
+
+function StopAnim(Rig, Anim)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+if not AnimatorModule[Rig][Anim.Name] then
+AnimatorModule[Rig][Anim.Name] = AnimatorModule:LoadAnimation(Rig, Anim)
+end
+AnimatorModule[Rig][Anim.Name]:Stop()
+end
+
 function CreateAnimation(Name, ID)
-    local anim = game:GetObjects("rbxassetid://" .. ID)[1]
-    anim.Name = Name
-    anim.Parent = Anims
+local New = game:GetObjects("rbxassetid://"..ID)[1]
+New.Parent = Anims
+New.Name = Name
 end
 
-function PlayAnim(AnimName, Fade, Speed)
-    local anim = Anims:FindFirstChild(AnimName)
-    if not anim then return end
-    for _, track in pairs(Humanoid:GetPlayingAnimationTracks()) do
-        track:Stop(Fade or 0)
-    end
-    local track = Humanoid:LoadAnimation(anim)
-    track:Play(Fade or 0.1, Speed or 1)
+if game.CoreGui:FindFirstChild("FluxLib") then
+game.CoreGui:FindFirstChild("FluxLib"):Destroy()
 end
-
--- Register Needed Animations
-CreateAnimation("Idle", 132196401232277)
-CreateAnimation("Walk", 96901225702491)
-CreateAnimation("Run", 96901225702491)
-CreateAnimation("Jump", 103148094958443)
-CreateAnimation("Fall", 90270295182351)
-
--- Detect animation state
-RunService.Heartbeat:Connect(function()
-    local velocity = RootPart.Velocity
-    local floor = workspace:FindPartOnRay(Ray.new(RootPart.Position, Vector3.new(0, -1, 0) * 4), Character)
-
-    if velocity.Y > 1 and not floor then
-        if not Jumped then
-            Jumped = true
-            PlayAnim("Jump")
-        end
-        Falled, Idled, Walked = false, false, false
-    elseif velocity.Y < -1 and not floor then
-        if not Falled then
-            Falled = true
-            PlayAnim("Fall")
-        end
-        Jumped, Idled, Walked = false, false, false
-    elseif velocity.Magnitude < 1 and floor then
-        if not Idled then
-            Idled = true
-            PlayAnim("Idle")
-        end
-        Jumped, Falled, Walked = false, false, false
-    elseif velocity.Magnitude >= 1 and floor then
-        if not Walked then
-            Walked = true
-            PlayAnim("Run")
-        end
-        Jumped, Falled, Idled = false, false, false
-    end
-end)
-
 
 local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vincent81536/hub/main/hubtest"))()
 local GUI = Lib:Window("Disbelief Hub", "Irony at its finest.", Color3.fromRGB(0, 0, 0), Enum.KeyCode.LeftControl)

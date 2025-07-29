@@ -639,6 +639,80 @@ end)
 end
 
 createRunToggleUI()
+-- Register the Freeze Idle animation
+CreateAnimation("FreezeIdle", 132196401232277)
+
+-- Track freeze state
+local isFrozen = false
+
+-- Persistent GUI for Freeze Idle Toggle
+local function createFreezeToggleUI()
+    if game.CoreGui:FindFirstChild("FreezeToggleUI") then
+        game.CoreGui.FreezeToggleUI:Destroy()
+    end
+
+    local FreezeToggleUI = Instance.new("ScreenGui")
+    FreezeToggleUI.Name = "FreezeToggleUI"
+    FreezeToggleUI.ResetOnSpawn = false
+    FreezeToggleUI.Parent = game.CoreGui
+
+    local FreezeButton = Instance.new("TextButton")
+    FreezeButton.Size = UDim2.new(0, 120, 0, 40)
+    FreezeButton.Position = UDim2.new(0, 140, 0.5, 0)
+    FreezeButton.Text = "Freeze Idle"
+    FreezeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    FreezeButton.TextColor3 = Color3.new(1, 1, 1)
+    FreezeButton.Font = Enum.Font.GothamBold
+    FreezeButton.TextSize = 18
+    FreezeButton.Draggable = true
+    FreezeButton.Active = true
+    FreezeButton.Parent = FreezeToggleUI
+
+    local function freezeRigs()
+        for _, part in pairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") and not part.Anchored then
+                part.Velocity = Vector3.zero
+                part.RotVelocity = Vector3.zero
+                part.AssemblyLinearVelocity = Vector3.zero
+                part.AssemblyAngularVelocity = Vector3.zero
+            end
+        end
+    end
+
+    FreezeButton.MouseButton1Click:Connect(function()
+        isFrozen = not isFrozen
+        FreezeButton.Text = isFrozen and "Unfreeze" or "Freeze Idle"
+
+        if isFrozen then
+            if not Anims:FindFirstChild("FreezeIdle") then
+                CreateAnimation("FreezeIdle", 132196401232277)
+            end
+
+            local track = Anims["FreezeIdle"]
+            if track then
+                track:Play(0.1, 1)
+                wait(0.1)
+                track:AdjustSpeed(0)
+            end
+
+            freezeRigs()
+        else
+            -- Unfreeze logic: Stop animation and allow movement again
+            if Anims["FreezeIdle"] then
+                Anims["FreezeIdle"]:Stop()
+            end
+        end
+    end)
+
+    -- Auto-remove on death/reset
+    Humanoid.Died:Connect(function()
+        if FreezeToggleUI then
+            FreezeToggleUI:Destroy()
+        end
+    end)
+end
+
+createFreezeToggleUI()
 
 -- ✅ Register attack animation
 CreateAnimation("Mafiosos hit ", 71308482162106)
@@ -681,70 +755,6 @@ local function createAttackUI()
         end)
     end
 end
-
--- ✅ Register Idle animation
-CreateAnimation("Idle", 132196401232277)
-
--- ✅ Create floating Idle toggle button
-local IdleUI = Instance.new("ScreenGui")
-IdleUI.Name = "IdleUI"
-IdleUI.ResetOnSpawn = false
-IdleUI.Parent = game.CoreGui
-
-local IdleButton = Instance.new("TextButton")
-IdleButton.Size = UDim2.new(0, 100, 0, 40)
-IdleButton.Position = UDim2.new(0, 260, 0.5, 0)
-IdleButton.Text = "Idle"
-IdleButton.BackgroundColor3 = Color3.fromRGB(0, 80, 150)
-IdleButton.TextColor3 = Color3.new(1, 1, 1)
-IdleButton.Font = Enum.Font.GothamBold
-IdleButton.TextSize = 18
-IdleButton.Draggable = true
-IdleButton.Active = true
-IdleButton.Parent = IdleUI
-
-local isIdleFrozen = false
-local idleFreezeLoop
-
-IdleButton.MouseButton1Click:Connect(function()
-    isIdleFrozen = not isIdleFrozen
-    if isIdleFrozen then
-        StopAnim(Character, Anims.Walk)
-        StopAnim(Character, Anims.Run)
-        PlayAnim(Character, Anims.Idle, 0.1, 1)
-        IdleButton.Text = "Unidle"
-
-        -- Freeze all rig parts
-        idleFreezeLoop = task.spawn(function()
-            while isIdleFrozen do
-                for _, part in pairs(Character:GetDescendants()) do
-                    if part:IsA("BasePart") and not part.Anchored then
-                        part.Velocity = Vector3.zero
-                        part.RotVelocity = Vector3.zero
-                        part.AssemblyLinearVelocity = Vector3.zero
-                        part.AssemblyAngularVelocity = Vector3.zero
-                        part:SetNetworkOwner(game.Players.LocalPlayer)
-                    end
-                end
-                task.wait(0.15)
-            end
-        end)
-    else
-        IdleButton.Text = "Idle"
-        StopAnim(Character, Anims.Idle)
-        if idleFreezeLoop then
-            task.cancel(idleFreezeLoop)
-        end
-    end
-end)
-
--- ✅ Clean up on death/reset
-game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
-    if IdleUI then
-        IdleUI:Destroy()
-    end
-end)
-
 
 -- Create the button now, and re-create on respawn
 player.CharacterAdded:Connect(function(char)

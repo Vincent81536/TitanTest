@@ -529,18 +529,6 @@ CreateAnimation("Jump", 103148094958443)
 CreateAnimation("Fall", 90270295182351)
 
 game:GetService("RunService").Heartbeat:Connect(function()
- -- 🔒 Anti-Jiggle Lock
-    local fakeChar = Character or Reanimate:GetCharacter()
-    for _, part in pairs(fakeChar:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Velocity = Vector3.zero
-            part.RotVelocity = Vector3.zero
-            part.AssemblyLinearVelocity = Vector3.zero
-            part.AssemblyAngularVelocity = Vector3.zero
-            part.Anchored = true
-        end
-    end
-
 for i,v in pairs(Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()) do
 v:Stop(0)
 end

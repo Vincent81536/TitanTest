@@ -182,7 +182,48 @@ else
 print('choose an api next time :(')
 return end
 
--- YES I KNOW ABOVE IS TERRIBLE PLS STOP REMINDING ME 😭 
+-- YES I KNOW ABOVE IS TERRIBLE PLS STOP REMINDING ME 😭
+
+
+-- 🧷 Anchor HumanoidRootPart on spawn to prevent physics explosion
+task.spawn(function()
+    if Character and Character:FindFirstChild("HumanoidRootPart") then
+        local RootPart = Character:FindFirstChild("HumanoidRootPart")
+        RootPart.Anchored = true
+        task.wait(0.2)
+        RootPart.Anchored = false
+    end
+end)
+
+
+-- 🛡️ Anti-Collision Patch: Make character immune to other player contact
+local PhysicsService = game:GetService("PhysicsService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+pcall(function()
+    PhysicsService:CreateCollisionGroup("NoPlayerCollision")
+end)
+
+pcall(function()
+    PhysicsService:CollisionGroupSetCollidable("NoPlayerCollision", "Default", false)
+    PhysicsService:CollisionGroupSetCollidable("NoPlayerCollision", "Players", false)
+    PhysicsService:CollisionGroupSetCollidable("NoPlayerCollision", "NoPlayerCollision", false)
+end)
+
+task.spawn(function()
+    while Character and Character:IsDescendantOf(workspace) do
+        for _, part in pairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                pcall(function()
+                    PhysicsService:SetPartCollisionGroup(part, "NoPlayerCollision")
+                end)
+            end
+        end
+        wait(1)
+    end
+end)
+ 
 
 local RootPart = Character.HumanoidRootPart
 local Jumped,Falled,Idled,Walked = false,false,false,false
